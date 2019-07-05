@@ -22,4 +22,19 @@
     <param name="roboticbase/entity_id" value="$(arg ENTITY_ID)"/>
     <param name="ros/topic" value="/robot_bridge/$(arg ENTITY_ID)/command"/>
   </node>
+
+  <node name="robot_state" pkg="uoa_poc2_bridge" type="robot_state.py" output="screen">
+    <rosparam command="delete" param=""/>
+    <param name="timezone" value="$(arg TIMEZONE)"/>
+    <param name="mqtt/host" value="$(arg MQTT_HOST)"/>
+    <param name="mqtt/port" value="$(arg MQTT_PORT)"/>
+    <param name="mqtt/username" value="$(arg MQTT_USERNAME)"/>
+    <param name="mqtt/password" value="$(arg MQTT_PASSWORD)"/>
+    <param name="mqtt/use_ca" value="$(arg MQTT_USE_CA)"/>
+    <param name="mqtt/cafile" value="$(find uoa_poc2_bridge)/certs/DST_Root_CA_X3.pem"/>
+    <param name="roboticbase/entity_type" value="$(arg ENTITY_TYPE)"/>
+    <param name="roboticbase/entity_id" value="$(arg ENTITY_ID)"/>
+    <param name="ros/topic" value="/robot_bridge/$(arg ENTITY_ID)/state"/>
+    <param name="thresholds/send_delta_millisec" value="$(arg SEND_DELTA_MILLISEC)"/>
+  </node>
 </launch>
