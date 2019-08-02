@@ -20,7 +20,7 @@ class StateBridge(MQTTBase):
         self.__params = rospy.get_param('~')
         super(StateBridge, self).__init__(self.__params)
         self.__mqtt_attrs_topic = '/{}/{}/attrs'.format(self.entity_type, self.entity_id)
-        rospy.Subscriber(self.__params['ros']['topic'], r_state, self._on_receive, queue_size=10)
+        rospy.Subscriber(self.__params['ros']['topic']['state'], r_state, self._on_receive, queue_size=10)
         self.__tz = pytz.timezone(self.__params['timezone'])
         self.__send_delta_ms = self.__params['thresholds']['send_delta_millisec']
         self.__prev_ms = datetime.datetime.now(self.__tz)
