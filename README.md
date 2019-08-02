@@ -19,4 +19,4 @@ rosdep install --from-paths src --ignore-src -r -y
 |MQTT\_USE\_CA|If "true", connect MQTT Broker by using mqtt/tls|
 |ENTITY\_TYPE|Type of RoboticBase's Entity|
 |ENTITY\_ID|ID of RoboticBase's Entity|
-
+|CMD\_NAME|the command name of RoboticBase's iotagent-json|
