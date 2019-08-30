@@ -8,7 +8,7 @@ import rospy
 
 from geometry_msgs.msg import Point
 
-from uoa_poc2_msgs.msg import r_command, r_result
+from uoa_poc2_msgs.msg import r_command, r_result, r_pose_optional, r_angle_optional, r_angle
 
 from uoa_poc2_bridge.mqtt_base import MQTTBase
 
@@ -60,12 +60,27 @@ class CommandBridge(MQTTBase):
         command.type = self.entity_type
         command.time = str(body['time'])
         command.cmd = str(body['cmd'])
+
         for wp in body['waypoints']:
             point = Point()
-            point.x = wp['x']
-            point.y = wp['y']
-            point.z = wp['z']
-            command.waypoints.append(point)
+            point.x = wp['point']['x']
+            point.y = wp['point']['y']
+            point.z = wp['point']['z']
+
+            angle = r_angle()
+            angle.roll = wp['angle_optional']['angle']['roll']
+            angle.pitch = wp['angle_optional']['angle']['pitch']
+            angle.yaw = wp['angle_optional']['angle']['yaw']
+
+            angle_optional = r_angle_optional()
+            angle_optional.valid = wp['angle_optional']['valid']
+            angle_optional.angle = angle
+
+            pose_optional = r_pose_optional()
+            pose_optional.point = point
+            pose_optional.angle_optional = angle_optional
+
+            command.waypoints.append(pose_optional)
 
         self.__cmd_pub.publish(command)
         return command
@@ -76,7 +91,17 @@ class CommandBridge(MQTTBase):
             'time': result.time,
             'received_time': result.received_time,
             'received_cmd': result.received_cmd,
-            'received_waypoints': [{'x': w.x, 'y': w.y, 'z': w.z} for w in result.received_waypoints],
+            'received_waypoints': [{
+                'point': {'x': w.point.x, 'y': w.point.y, 'z': w.point.z},
+                'angle_optional': {
+                    'valid': w.angle_optional.valid,
+                    'angle': {
+                        'roll': w.angle_optional.angle.roll,
+                        'pitch': w.angle_optional.angle.pitch,
+                        'yaw': w.angle_optional.angle.yaw,
+                    }
+                }
+            } for w in result.received_waypoints],
             'result': result.result,
             'errors': [str(e) for e in result.errors],
         }
