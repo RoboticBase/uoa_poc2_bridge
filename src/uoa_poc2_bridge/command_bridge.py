@@ -43,9 +43,9 @@ class CommandBridge(MQTTBase):
 
         try:
             message = json.loads(payload)
-            body = message[self.__cmd_name]
-            ros_published = self._process_cmd(body)
-            logger.infof('processed the command, {}', ros_published)
+            if self.__cmd_name in message:
+                ros_published = self._process_cmd(message[self.__cmd_name])
+                logger.infof('processed the command [{}], {}', self.__cmd_name, ros_published)
         except (ValueError, TypeError) as e:
             logger.errorf('invalid payload, topic={}, payload={}', topic, payload)
 
