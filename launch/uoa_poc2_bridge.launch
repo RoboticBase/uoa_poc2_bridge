@@ -8,6 +8,7 @@
   <arg name="ENTITY_ID" default="$(env ENTITY_ID)"/>
   <arg name="CMD_NAME" default="$(env CMD_NAME)"/>
   <arg name="EMG_NAME" default="$(env EMG_NAME)"/>
+  <arg name="ROBOT_NAME" default="$(env ROBOT_NAME)"/>
   <arg name="TIMEZONE" default="Asia/Tokyo"/>
   <arg name="SEND_DELTA_MILLISEC" default="1000"/>
 
@@ -23,8 +24,8 @@
     <param name="roboticbase/entity_type" value="$(arg ENTITY_TYPE)"/>
     <param name="roboticbase/entity_id" value="$(arg ENTITY_ID)"/>
     <param name="roboticbase/cmd_name" value="$(arg CMD_NAME)"/>
-    <param name="ros/topic/cmd" value="/robot_bridge/$(arg ENTITY_ID)/cmd"/>
-    <param name="ros/topic/cmdexe" value="/robot_bridge/$(arg ENTITY_ID)/cmdexe"/>
+    <param name="ros/topic/cmd" value="/robot_bridge/$(arg ROBOT_NAME)/cmd"/>
+    <param name="ros/topic/cmdexe" value="/robot_bridge/$(arg ROBOT_NAME)/cmdexe"/>
   </node>
 
   <node name="robot_emergency" pkg="uoa_poc2_bridge" type="robot_emergency.py" output="screen">
@@ -39,8 +40,8 @@
     <param name="roboticbase/entity_type" value="$(arg ENTITY_TYPE)"/>
     <param name="roboticbase/entity_id" value="$(arg ENTITY_ID)"/>
     <param name="roboticbase/emg_name" value="$(arg EMG_NAME)"/>
-    <param name="ros/topic/emg" value="/robot_bridge/$(arg ENTITY_ID)/emg"/>
-    <param name="ros/topic/emgexe" value="/robot_bridge/$(arg ENTITY_ID)/emgexe"/>
+    <param name="ros/topic/emg" value="/robot_bridge/$(arg ROBOT_NAME)/emg"/>
+    <param name="ros/topic/emgexe" value="/robot_bridge/$(arg ROBOT_NAME)/emgexe"/>
   </node>
 
   <node name="robot_state" pkg="uoa_poc2_bridge" type="robot_state.py" output="screen">
@@ -54,7 +55,7 @@
     <param name="mqtt/cafile" value="$(find uoa_poc2_bridge)/certs/DST_Root_CA_X3.pem"/>
     <param name="roboticbase/entity_type" value="$(arg ENTITY_TYPE)"/>
     <param name="roboticbase/entity_id" value="$(arg ENTITY_ID)"/>
-    <param name="ros/topic/state" value="/robot_bridge/$(arg ENTITY_ID)/state"/>
+    <param name="ros/topic/state" value="/robot_bridge/$(arg ROBOT_NAME)/state"/>
     <param name="thresholds/send_delta_millisec" value="$(arg SEND_DELTA_MILLISEC)"/>
   </node>
 </launch>
