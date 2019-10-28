@@ -9,10 +9,11 @@
   <arg name="CMD_NAME" default="$(env CMD_NAME)"/>
   <arg name="EMG_NAME" default="$(env EMG_NAME)"/>
   <arg name="ROBOT_NAME" default="$(env ROBOT_NAME)"/>
+  <arg name="NODE_SUFFIX" default="$(env NODE_SUFFIX)"/>
   <arg name="TIMEZONE" default="Asia/Tokyo"/>
   <arg name="SEND_DELTA_MILLISEC" default="1000"/>
 
-  <node name="robot_command" pkg="uoa_poc2_bridge" type="robot_command.py" output="screen">
+  <node name="robot_command_$(arg NODE_SUFFIX)" pkg="uoa_poc2_bridge" type="robot_command.py" output="screen">
     <rosparam command="delete" param=""/>
     <param name="timezone" value="$(arg TIMEZONE)"/>
     <param name="mqtt/host" value="$(arg MQTT_HOST)"/>
@@ -28,7 +29,7 @@
     <param name="ros/topic/cmdexe" value="/robot_bridge/$(arg ROBOT_NAME)/cmdexe"/>
   </node>
 
-  <node name="robot_emergency" pkg="uoa_poc2_bridge" type="robot_emergency.py" output="screen">
+  <node name="robot_emergency_$(arg NODE_SUFFIX)" pkg="uoa_poc2_bridge" type="robot_emergency.py" output="screen">
     <rosparam command="delete" param=""/>
     <param name="timezone" value="$(arg TIMEZONE)"/>
     <param name="mqtt/host" value="$(arg MQTT_HOST)"/>
@@ -44,7 +45,7 @@
     <param name="ros/topic/emgexe" value="/robot_bridge/$(arg ROBOT_NAME)/emgexe"/>
   </node>
 
-  <node name="robot_state" pkg="uoa_poc2_bridge" type="robot_state.py" output="screen">
+  <node name="robot_state_$(arg NODE_SUFFIX)" pkg="uoa_poc2_bridge" type="robot_state.py" output="screen">
     <rosparam command="delete" param=""/>
     <param name="timezone" value="$(arg TIMEZONE)"/>
     <param name="mqtt/host" value="$(arg MQTT_HOST)"/>
