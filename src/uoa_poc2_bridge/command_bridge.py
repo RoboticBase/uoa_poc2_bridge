@@ -68,13 +68,20 @@ class CommandBridge(MQTTBase):
             point.z = wp['point']['z']
 
             angle = r_angle()
-            angle.roll = wp['angle_optional']['angle']['roll']
-            angle.pitch = wp['angle_optional']['angle']['pitch']
-            angle.yaw = wp['angle_optional']['angle']['yaw']
-
             angle_optional = r_angle_optional()
-            angle_optional.valid = wp['angle_optional']['valid']
-            angle_optional.angle = angle
+
+            if wp['angle'] is not None:
+                angle.roll = wp['angle']['roll']
+                angle.pitch = wp['angle']['pitch']
+                angle.yaw = wp['angle']['yaw']
+                angle_optional.valid = True
+                angle_optional.angle = angle
+            else:
+                angle.roll = 0.0
+                angle.pitch = 0.0
+                angle.yaw = 0.0
+                angle_optional.valid = False
+                angle_optional.angle = angle
 
             pose_optional = r_pose_optional()
             pose_optional.point = point
@@ -93,14 +100,11 @@ class CommandBridge(MQTTBase):
             'received_cmd': result.received_cmd,
             'received_waypoints': [{
                 'point': {'x': w.point.x, 'y': w.point.y, 'z': w.point.z},
-                'angle_optional': {
-                    'valid': w.angle_optional.valid,
-                    'angle': {
-                        'roll': w.angle_optional.angle.roll,
-                        'pitch': w.angle_optional.angle.pitch,
-                        'yaw': w.angle_optional.angle.yaw,
-                    }
-                }
+                'angle': {
+                    'roll': w.angle_optional.angle.roll,
+                    'pitch': w.angle_optional.angle.pitch,
+                    'yaw': w.angle_optional.angle.yaw,
+                } if w.angle_optional.valid else None,
             } for w in result.received_waypoints],
             'result': result.result,
             'errors': [str(e) for e in result.errors],
