@@ -8,7 +8,7 @@ import rospy
 
 from geometry_msgs.msg import Point
 
-from uoa_poc2_msgs.msg import r_command, r_result, r_pose_optional, r_angle_optional, r_angle
+from delivery_robot.msg import r_command, r_result, r_pose_optional, r_angle_optional, r_angle
 
 from uoa_poc2_bridge.mqtt_base import MQTTBase
 
