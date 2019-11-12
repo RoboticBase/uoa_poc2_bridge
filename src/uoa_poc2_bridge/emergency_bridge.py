@@ -8,7 +8,7 @@ import rospy
 
 from geometry_msgs.msg import Point
 
-from uoa_poc2_msgs.msg import r_emergency_command, r_emergency_result
+from delivery_robot.msg import r_emergency_command, r_emergency_result
 
 from uoa_poc2_bridge.mqtt_base import MQTTBase
 

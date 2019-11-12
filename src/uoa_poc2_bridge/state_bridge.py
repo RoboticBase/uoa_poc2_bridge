@@ -7,7 +7,7 @@ import pytz
 
 import rospy
 
-from uoa_poc2_msgs.msg import r_state
+from delivery_robot.msg import r_state
 
 from uoa_poc2_bridge.mqtt_base import MQTTBase
 
