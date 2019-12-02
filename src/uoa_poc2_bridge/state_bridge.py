@@ -58,22 +58,16 @@ class StateBridge(MQTTBase):
                         'y': state.destination.point.y,
                         'z': state.destination.point.z,
                     },
-                    'angle_optional': {
-                        'valid': state.destination.angle_optional.valid,
-                        'angle': {
-                            'roll': state.destination.angle_optional.angle.roll,
-                            'pitch': state.destination.angle_optional.angle.pitch,
-                            'yaw': state.destination.angle_optional.angle.yaw,
-                        }
-                    }
+                    'angle': {
+                        'roll': state.destination.angle_optional.angle.roll,
+                        'pitch': state.destination.angle_optional.angle.pitch,
+                        'yaw': state.destination.angle_optional.angle.yaw,
+                    } if state.destination.angle_optional.valid else None,
                 },
                 'covariance': [c for c in state.covariance],
                 'battery': {
                     'voltage': state.battery.voltage,
-                    'current_optional': {
-                        'valid': state.battery.current_optional.valid,
-                        'current': state.battery.current_optional.current,
-                    }
+                    'current': state.battery.current_optional.current if state.battery.current_optional.valid else None,
                 }
             }
 
