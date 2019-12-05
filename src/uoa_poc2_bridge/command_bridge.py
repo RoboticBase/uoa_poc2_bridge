@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import subprocess
 import datetime
 import json
 
@@ -40,6 +41,15 @@ class CommandBridge(MQTTBase):
         topic = str(msg.topic)
         payload = str(msg.payload)
         logger.infof('received message from {}, payload={}', topic, payload)
+
+        p = json.loads(payload)['send_cmd']
+        if p['cmd'] == 'navi' and p['waypoints'] == [{"point":{"x":-0.5,"y":-1.5,"z":0},"angle":{"roll":0,"pitch":0,"yaw":-0.46}}]:
+            if topic == '/delivery_robot/delivery_robot_01/cmd':
+                bag = 'turtlebot3_single.bag'
+            else:
+                bag = 'megarover_single.bag'
+            subprocess.Popen(['rosbag', 'play', bag], cwd='/opt/bags')
+            logger.infof('rosbag play bag={}', bag)
 
         try:
             message = json.loads(payload)

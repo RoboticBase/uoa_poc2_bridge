@@ -11,7 +11,7 @@
   <arg name="ROBOT_NAME" default="$(env ROBOT_NAME)"/>
   <arg name="NODE_SUFFIX" default="$(env NODE_SUFFIX)"/>
   <arg name="TIMEZONE" default="Asia/Tokyo"/>
-  <arg name="SEND_DELTA_MILLISEC" default="1000"/>
+  <arg name="SEND_DELTA_MILLISEC" default="100"/>
 
   <node name="robot_command_$(arg NODE_SUFFIX)" pkg="uoa_poc2_bridge" type="robot_command.py" output="screen">
     <rosparam command="delete" param=""/>
