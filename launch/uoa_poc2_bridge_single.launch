@@ -14,7 +14,6 @@
   <arg name="SEND_DELTA_MILLISEC" default="100"/>
 
   <node name="robot_command_$(arg NODE_SUFFIX)" pkg="uoa_poc2_bridge" type="robot_command.py" output="screen">
-    <rosparam command="delete" param=""/>
     <param name="timezone" value="$(arg TIMEZONE)"/>
     <param name="mqtt/host" value="$(arg MQTT_HOST)"/>
     <param name="mqtt/port" value="$(arg MQTT_PORT)"/>
@@ -30,7 +29,6 @@
   </node>
 
   <node name="robot_emergency_$(arg NODE_SUFFIX)" pkg="uoa_poc2_bridge" type="robot_emergency.py" output="screen">
-    <rosparam command="delete" param=""/>
     <param name="timezone" value="$(arg TIMEZONE)"/>
     <param name="mqtt/host" value="$(arg MQTT_HOST)"/>
     <param name="mqtt/port" value="$(arg MQTT_PORT)"/>
@@ -46,7 +44,6 @@
   </node>
 
   <node name="robot_state_$(arg NODE_SUFFIX)" pkg="uoa_poc2_bridge" type="robot_state.py" output="screen">
-    <rosparam command="delete" param=""/>
     <param name="timezone" value="$(arg TIMEZONE)"/>
     <param name="mqtt/host" value="$(arg MQTT_HOST)"/>
     <param name="mqtt/port" value="$(arg MQTT_PORT)"/>
