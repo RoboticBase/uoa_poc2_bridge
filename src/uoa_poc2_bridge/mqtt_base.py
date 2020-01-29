@@ -33,12 +33,14 @@ class MQTTBase(object):
         self.__client.on_connect = self._on_connect
         self.__client.on_message = self._on_message
 
-        if 'use_ca' in self.__params['mqtt'] and self.__params['mqtt']['use_ca'] and 'cafile' in self.__params['mqtt']:
+        if 'use_ca' in self.__params['mqtt'] and self.__params['mqtt']['use_ca'] and \
+                'cafile' in self.__params['mqtt'] and isinstance(self.__params['mqtt']['cafile'], str):
             cafile = self.__params['mqtt']['cafile'].strip()
             if len(cafile) > 0 and os.path.isfile(cafile):
                 self.__client.tls_set(cafile, tls_version=ssl.PROTOCOL_TLSv1_2)
 
-        if 'username' in self.__params['mqtt'] and 'password' in self.__params['mqtt']:
+        if 'username' in self.__params['mqtt'] and isinstance(self.__params['mqtt']['username'], str) and \
+                'password' in self.__params['mqtt'] and isinstance(self.__params['mqtt']['password'], str):
             username = self.__params['mqtt']['username'].strip()
             password = self.__params['mqtt']['password'].strip()
             if len(username) > 0 and len(password) > 0:
@@ -54,9 +56,11 @@ class MQTTBase(object):
         if self.__client:
             self.__client.loop_stop()
             self.__client.disconnect()
+        else:
+            logger.warnf('_on_shutdown is ignored')
 
     def _on_connect(self, client, userdata, flags, response_code):
         logger.infof('connected to mqtt broker, status={}', response_code)
 
     def _on_message(self, client, userdata, msg):
-        pass
+        logger.infof('received message from mqtt broker, msg={}', msg)

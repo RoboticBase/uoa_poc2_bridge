@@ -16,4 +16,7 @@ def append_libpath():
 @pytest.fixture(scope='session', autouse=True)
 def mock_rospy():
     sys.modules['rospy'] = MagicMock()
+    sys.modules['paho'] = MagicMock()
+    sys.modules['paho.mqtt'] = MagicMock()
+    sys.modules['paho.mqtt.client'] = MagicMock()
     yield
