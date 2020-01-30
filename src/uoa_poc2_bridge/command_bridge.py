@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import datetime
 import json
 
 import pytz
@@ -43,11 +42,13 @@ class CommandBridge(MQTTBase):
 
         try:
             message = json.loads(payload)
-            if self.__cmd_name in message:
+            if isinstance(message, dict) and self.__cmd_name in message:
                 ros_published = self._process_cmd(message[self.__cmd_name])
                 logger.infof('processed the command [{}], {}', self.__cmd_name, ros_published)
+            else:
+                logger.debugf('ignore this command, topic={}, payload={}', topic, payload)
         except (ValueError, TypeError) as e:
-            logger.errorf('invalid payload, topic={}, payload={}', topic, payload)
+            logger.errorf('invalid payload, topic={}, payload={}, error={}', topic, payload, str(e))
 
     def _on_receive(self, result):
         logger.infof('received ros cmdexe message={}', result)

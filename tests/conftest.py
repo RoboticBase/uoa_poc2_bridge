@@ -19,4 +19,8 @@ def mock_rospy():
     sys.modules['paho'] = MagicMock()
     sys.modules['paho.mqtt'] = MagicMock()
     sys.modules['paho.mqtt.client'] = MagicMock()
+    sys.modules['geometry_msgs'] = MagicMock()
+    sys.modules['geometry_msgs.msg'] = MagicMock()
+    sys.modules['uoa_poc2_msgs'] = MagicMock()
+    sys.modules['uoa_poc2_msgs.msg'] = MagicMock()
     yield
