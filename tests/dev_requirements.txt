@@ -5,3 +5,4 @@ pytest-mock ~= 2.0
 lazy-import ~= 0.2
 pytz == 2019.3
 pydataclasses ~= 1.0
+freezegun ~= 0.3

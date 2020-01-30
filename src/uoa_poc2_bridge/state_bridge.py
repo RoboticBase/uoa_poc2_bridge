@@ -39,7 +39,7 @@ class StateBridge(MQTTBase):
             message = {
                 'time': now.isoformat(),
                 'mode': state.mode,
-                'errors': [err for err in state.errors if len(err) > 0],
+                'errors': [err for err in state.errors if isinstance(err, str) and len(err) > 0],
                 'pose': {
                     'point': {
                         'x': state.pose.point.x,

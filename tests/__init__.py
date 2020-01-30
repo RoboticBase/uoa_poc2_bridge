@@ -59,3 +59,27 @@ class r_emergency_result(DataClass):
     received_emergency_cmd = None
     result = None
     errors = None
+
+
+class r_state(DataClass):
+    mode = None
+    errors = None
+    pose = None
+    destination = None
+    covariance = None
+    battery = None
+
+
+class r_pose(DataClass):
+    point = None
+    angle = None
+
+
+class r_battery(DataClass):
+    voltage = None
+    current_optional = None
+
+
+class r_current_optional(DataClass):
+    valid = None
+    current = None
