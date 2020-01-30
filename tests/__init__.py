@@ -44,3 +44,18 @@ class r_result(DataClass):
     received_waypoints = None
     result = None
     errors = None
+
+
+class r_emergency_command(DataClass):
+    id = None
+    type = None
+    time = None
+    emergency_cmd = None
+
+
+class r_emergency_result(DataClass):
+    time = None
+    received_time = None
+    received_emergency_cmd = None
+    result = None
+    errors = None
