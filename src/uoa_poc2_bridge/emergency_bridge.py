@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-import datetime
 import json
 
 import pytz
 
 import rospy
-
-from geometry_msgs.msg import Point
 
 from uoa_poc2_msgs.msg import r_emergency_command, r_emergency_result
 
@@ -43,11 +40,13 @@ class EmergencyBridge(MQTTBase):
 
         try:
             message = json.loads(payload)
-            if self.__emg_name in message:
+            if isinstance(message, dict) and self.__emg_name in message:
                 ros_published = self._process_emg(message[self.__emg_name])
                 logger.infof('processed the command [{}], {}', self.__emg_name, ros_published)
+            else:
+                logger.debugf('ignore this command, topic={}, payload={}', topic, payload)
         except (ValueError, TypeError) as e:
-            logger.errorf('invalid payload, topic={}, payload={}', topic, payload)
+            logger.errorf('invalid payload, topic={}, payload={}, error={}', topic, payload, str(e))
 
     def _on_receive(self, result):
         logger.infof('received ros emgexe message={}', result)
