@@ -4,6 +4,7 @@ from mock import call
 
 import pytest
 import lazy_import
+import freezegun
 
 from . import Message, Point, r_command, r_angle, r_angle_optional, r_pose_optional, r_result
 
@@ -29,6 +30,7 @@ def set_params():
             'entity_type': 'test_type',
             'entity_id': 'test_id',
             'cmd_name': 'cmd_name',
+            'auto_cmdexe': False,
         },
         'mqtt': {
             'host': 'mqtt://mqtt.example.com',
@@ -100,6 +102,9 @@ class TestCommandBridge(object):
 
     @pytest.mark.parametrize('topic', [
         '/test', '', 1, 1e-1, True, None, [], {},
+    ])
+    @pytest.mark.parametrize('auto_cmdexe', [
+        False, True, "", None
     ])
     @pytest.mark.parametrize('payload, published', [
         ({
@@ -290,24 +295,53 @@ class TestCommandBridge(object):
                              valid=True, angle=r_angle(roll=-1.1, pitch=-1.2, yaw=-1.3))),
                      ])),
     ])
-    def test_on_message_process_cmd(self, topic, payload, published):
+    def test_on_message_process_cmd(self, topic, auto_cmdexe, payload, published):
         msg = Message(topic=topic, payload=json.dumps(payload))
 
         bridge = command_bridge.CommandBridge()
+        bridge._CommandBridge__is_auto_cmdexe = auto_cmdexe
         bridge.connect()
-        bridge._on_message(bridge.client, 'userdata', msg)
+        with freezegun.freeze_time('2020-11-12T13:14:15.100001+09:00'):
+            bridge._on_message(bridge.client, 'userdata', msg)
 
         assert command_bridge.rospy.Publisher.return_value.publish.call_count == 1
         assert command_bridge.rospy.Publisher.return_value.publish.call_args == call(published)
 
-        assert command_bridge.logger.infof.call_count == 2
+        if auto_cmdexe:
+            cmdexe = {
+                'cmd_name': {
+                    'time': '2020-11-12T13:14:15.100001+09:00',
+                    'received_time': published.time,
+                    'received_cmd': published.cmd,
+                    'received_waypoints': [{
+                        'point': {'x': w.point.x, 'y': w.point.y, 'z': w.point.z},
+                        'angle': {
+                            'roll': w.angle_optional.angle.roll,
+                            'pitch': w.angle_optional.angle.pitch,
+                            'yaw': w.angle_optional.angle.yaw,
+                        } if w.angle_optional.valid else None,
+                    } for w in published.waypoints],
+                    'result': 'ack',
+                    'errors': [],
+                }
+            }
+
+            assert command_bridge.logger.infof.call_count == 3
+            assert command_bridge.logger.infof.call_args_list[2] == call(
+                'auto responded [{}], {}', 'cmd_name', json.dumps(cmdexe))
+            assert bridge.client.publish.call_count == 1
+            assert bridge.client.publish.call_args == call('/test_type/test_id/cmdexe', json.dumps(cmdexe))
+        else:
+            assert command_bridge.logger.infof.call_count == 2
+            assert bridge.client.publish.call_count == 0
+
         assert command_bridge.logger.infof.call_args_list[0] == call(
             'received message from {}, payload={}', str(topic), json.dumps(payload))
         assert command_bridge.logger.infof.call_args_list[1] == call(
             'processed the command [{}], {}', 'cmd_name', published)
+
         assert command_bridge.logger.debugf.call_count == 0
         assert command_bridge.logger.errorf.call_count == 0
-        assert bridge.client.publish.call_count == 0
 
     @pytest.mark.parametrize('topic', [
         '/test', '', 1, 1e-1, True, None, [], {},
