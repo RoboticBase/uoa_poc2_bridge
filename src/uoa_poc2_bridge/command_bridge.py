@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import json
 
 import pytz
@@ -25,6 +26,7 @@ class CommandBridge(MQTTBase):
         rospy.Subscriber(self.__params['ros']['topic']['cmdexe'], r_result, self._on_receive, queue_size=1)
         self.__tz = pytz.timezone(self.__params['timezone'])
         self.__cmd_name = self.__params['roboticbase']['cmd_name']
+        self.__is_auto_cmdexe = self.__params['roboticbase']['auto_cmdexe']
 
     def start(self):
         logger.infof('CommandBridge start')
@@ -45,6 +47,9 @@ class CommandBridge(MQTTBase):
             if isinstance(message, dict) and self.__cmd_name in message:
                 ros_published = self._process_cmd(message[self.__cmd_name])
                 logger.infof('processed the command [{}], {}', self.__cmd_name, ros_published)
+                if self.__is_auto_cmdexe:
+                    auto_responded = self._auto_cmdexe(ros_published)
+                    logger.infof('auto responded [{}], {}', self.__cmd_name, auto_responded)
             else:
                 logger.debugf('ignore this command, topic={}, payload={}', topic, payload)
         except (ValueError, TypeError) as e:
@@ -109,6 +114,28 @@ class CommandBridge(MQTTBase):
             } for w in result.received_waypoints],
             'result': result.result,
             'errors': [str(e) for e in result.errors],
+        }
+        payload = json.dumps(message)
+        self.client.publish(self.__mqtt_cmdexe_topic, payload)
+        return payload
+
+    def _auto_cmdexe(self, ros_published):
+        now = datetime.datetime.now(self.__tz)
+        message = {}
+        message[self.__cmd_name] = {
+            'time': now.isoformat(),
+            'received_time': ros_published.time,
+            'received_cmd': ros_published.cmd,
+            'received_waypoints': [{
+                'point': {'x': w.point.x, 'y': w.point.y, 'z': w.point.z},
+                'angle': {
+                    'roll': w.angle_optional.angle.roll,
+                    'pitch': w.angle_optional.angle.pitch,
+                    'yaw': w.angle_optional.angle.yaw,
+                } if w.angle_optional.valid else None,
+            } for w in ros_published.waypoints],
+            'result': 'ack',
+            'errors': [],
         }
         payload = json.dumps(message)
         self.client.publish(self.__mqtt_cmdexe_topic, payload)

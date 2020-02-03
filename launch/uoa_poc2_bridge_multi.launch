@@ -12,6 +12,7 @@
   <arg name="ROBOT_NAME1" default="$(env ROBOT_NAME1)"/>
   <arg name="TIMEZONE" default="Asia/Tokyo"/>
   <arg name="SEND_DELTA_MILLISEC" default="1000"/>
+  <arg name="AUTO_CMDEXE" default="$(optenv AUTO_CMDEXE)"/>
 
   <node name="robot_command1" pkg="uoa_poc2_bridge" type="robot_command.py" output="screen">
     <rosparam command="delete" param=""/>
@@ -27,6 +28,7 @@
     <param name="roboticbase/cmd_name" value="$(arg CMD_NAME)"/>
     <param name="ros/topic/cmd" value="/robot_bridge/$(arg ROBOT_NAME1)/cmd"/>
     <param name="ros/topic/cmdexe" value="/robot_bridge/$(arg ROBOT_NAME1)/cmdexe"/>
+    <param name="roboticbase/auto_cmdexe" value="$(arg AUTO_CMDEXE)"/>
   </node>
 
   <node name="robot_command2" pkg="uoa_poc2_bridge" type="robot_command.py" output="screen">
@@ -43,6 +45,7 @@
     <param name="roboticbase/cmd_name" value="$(arg CMD_NAME)"/>
     <param name="ros/topic/cmd" value="/robot_bridge/$(arg ROBOT_NAME2)/cmd"/>
     <param name="ros/topic/cmdexe" value="/robot_bridge/$(arg ROBOT_NAME2)/cmdexe"/>
+    <param name="roboticbase/auto_cmdexe" value="$(arg AUTO_CMDEXE)"/>
   </node>
 
   <node name="robot_emergency1" pkg="uoa_poc2_bridge" type="robot_emergency.py" output="screen">
